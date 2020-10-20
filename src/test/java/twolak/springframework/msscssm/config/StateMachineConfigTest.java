@@ -27,41 +27,30 @@ public class StateMachineConfigTest {
         StateMachine<PaymentState, PaymentEvent> stateMachine = stateMachineFactory.getStateMachine(UUID.randomUUID());
         stateMachine.start();
         
-        log.debug(stateMachine.getState().toString());
         Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
         
         stateMachine.sendEvent(PaymentEvent.PRE_AUTHORIZE);
         
-        log.debug(stateMachine.getState().toString());
         Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
         
         stateMachine.sendEvent(PaymentEvent.PRE_AUTH_APPROVED);
         
-        log.debug(stateMachine.getState().toString());
         Assertions.assertEquals(PaymentState.PRE_AUTH, stateMachine.getState().getId());
-        
-        stateMachine.sendEvent(PaymentEvent.PRE_AUTH_DECLINED);
-
-        log.debug(stateMachine.getState().toString());
-        Assertions.assertEquals(PaymentState.PRE_AUTH_ERROR, stateMachine.getState().getId());
     }
     
     @Test
     public void testNewStateMachinePreAuthDeclined() throws Exception {
         StateMachine<PaymentState, PaymentEvent> stateMachine = stateMachineFactory.getStateMachine(UUID.randomUUID());
         stateMachine.start();
-
-        log.debug(stateMachine.getState().toString());
+        
         Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
 
         stateMachine.sendEvent(PaymentEvent.PRE_AUTHORIZE);
-
-        log.debug(stateMachine.getState().toString());
+        
         Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
 
         stateMachine.sendEvent(PaymentEvent.PRE_AUTH_DECLINED);
-
-        log.debug(stateMachine.getState().toString());
+        
         Assertions.assertEquals(PaymentState.PRE_AUTH_ERROR, stateMachine.getState().getId());
     }
 }
