@@ -36,4 +36,18 @@ public class StateMachineConfigTest {
         MatcherAssert.assertThat(stateMachine.getState().getId(),
                 CoreMatchers.anyOf(CoreMatchers.is(PaymentState.PRE_AUTH), CoreMatchers.is(PaymentState.PRE_AUTH_ERROR)));
     }
+    
+    @Test
+    public void testAuthStateMachine() throws Exception {
+        StateMachine<PaymentState, PaymentEvent> stateMachine = this.stateMachineFactory.getStateMachine(UUID.randomUUID());
+        stateMachine.start();
+        stateMachine.sendEvent(PaymentEvent.PRE_AUTH_APPROVED);
+        
+        Assertions.assertEquals(PaymentState.PRE_AUTH, stateMachine.getState().getId());
+        
+        stateMachine.sendEvent(PaymentEvent.AUTHORIZE);
+        
+        MatcherAssert.assertThat(stateMachine.getState().getId(),
+                CoreMatchers.anyOf(CoreMatchers.is(PaymentState.AUTH), CoreMatchers.is(PaymentState.AUTH_ERROR)));
+    }
 }
