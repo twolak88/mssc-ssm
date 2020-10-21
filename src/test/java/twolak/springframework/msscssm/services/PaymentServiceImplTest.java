@@ -2,6 +2,8 @@ package twolak.springframework.msscssm.services;
 
 import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +49,12 @@ public class PaymentServiceImplTest {
         Payment preAuthedPayment = this.paymentRepository.getOne(savedPayment.getId());
         
         log.debug(preAuthedPayment.toString());
-        Assertions.assertEquals(PaymentState.PRE_AUTH, stateMachine.getState().getId());
-        Assertions.assertEquals(PaymentState.PRE_AUTH, preAuthedPayment.getPaymentState());
+        log.debug(preAuthedPayment.getPaymentState().toString());
+        
+        MatcherAssert.assertThat(stateMachine.getState().getId(), 
+                CoreMatchers.anyOf(CoreMatchers.is(PaymentState.PRE_AUTH), CoreMatchers.is(PaymentState.PRE_AUTH_ERROR)));
+        MatcherAssert.assertThat(preAuthedPayment.getPaymentState(),
+                CoreMatchers.anyOf(CoreMatchers.is(PaymentState.PRE_AUTH), CoreMatchers.is(PaymentState.PRE_AUTH_ERROR)));
         
     }
     

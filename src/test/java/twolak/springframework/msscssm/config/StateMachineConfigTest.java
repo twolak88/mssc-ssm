@@ -2,6 +2,8 @@ package twolak.springframework.msscssm.config;
 
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,26 +33,7 @@ public class StateMachineConfigTest {
         
         stateMachine.sendEvent(PaymentEvent.PRE_AUTHORIZE);
         
-        Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
-        
-        stateMachine.sendEvent(PaymentEvent.PRE_AUTH_APPROVED);
-        
-        Assertions.assertEquals(PaymentState.PRE_AUTH, stateMachine.getState().getId());
-    }
-    
-    @Test
-    public void testNewStateMachinePreAuthDeclined() throws Exception {
-        StateMachine<PaymentState, PaymentEvent> stateMachine = stateMachineFactory.getStateMachine(UUID.randomUUID());
-        stateMachine.start();
-        
-        Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
-
-        stateMachine.sendEvent(PaymentEvent.PRE_AUTHORIZE);
-        
-        Assertions.assertEquals(PaymentState.NEW, stateMachine.getState().getId());
-
-        stateMachine.sendEvent(PaymentEvent.PRE_AUTH_DECLINED);
-        
-        Assertions.assertEquals(PaymentState.PRE_AUTH_ERROR, stateMachine.getState().getId());
+        MatcherAssert.assertThat(stateMachine.getState().getId(),
+                CoreMatchers.anyOf(CoreMatchers.is(PaymentState.PRE_AUTH), CoreMatchers.is(PaymentState.PRE_AUTH_ERROR)));
     }
 }
